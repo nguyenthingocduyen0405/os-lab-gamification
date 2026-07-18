@@ -73,20 +73,30 @@ export default function Home() {
           <div><span>시간</span><strong>{timeLeft}s</strong></div>
           <div className="hud-progress"><span style={{ width: ((timeLeft / currentLevel.seconds) * 100) + "%" }} /></div>
         </div>}
-        {status === "levels" && <div className="game-overlay level-select">
-          <div className="level-heading">
-            <div><p>SELECT LEVEL</p><h2>레벨을 선택하세요</h2><span>원하는 난이도를 골라 시스템을 시작하세요.</span></div>
-            <img src="/os-penguin.png" alt="" aria-hidden="true" />
+        {status === "levels" && <div className="game-overlay duo-level">
+          <nav className="path-topbar">
+            <button onClick={(e) => { e.stopPropagation(); setStatus("ready"); }} aria-label="Quay lại">‹</button>
+            <div className="path-brand"><img src="/os-penguin.png" alt="" /><strong>OS LAB</strong></div>
+            <div className="path-stats"><span title="Chuỗi ngày">🔥 <b>3</b></span><span title="Kỷ lục">◆ <b>{best}</b></span></div>
+          </nav>
+          <div className="path-scroll">
+            <header className="unit-banner">
+              <div><small>SECTION 1 · UNIT 1</small><h2>OPERATING SYSTEM</h2><p>프로세스와 커널을 정복하세요!</p></div>
+              <span>OS GUIDE&nbsp; ›</span>
+            </header>
+            <div className="lesson-path">
+              <div className="path-line" aria-hidden="true" />
+              {LEVELS.map((level, index) => {
+                const completed = best >= level.goal;
+                return <button key={level.number} className={"lesson-node node-" + (index + 1) + (completed ? " completed" : "") + (index === selectedLevel ? " current" : "")} onClick={(e) => { e.stopPropagation(); beginGame(index); }} aria-label={level.name + ", " + level.seconds + " giây"}>
+                  {index === selectedLevel && <span className="start-bubble">START</span>}
+                  <span className="node-circle"><b>{completed ? "✓" : level.icon}</b></span>
+                  <span className="node-copy"><strong>{level.name}</strong><small>LV.{level.number} · {level.seconds}s · {level.goal} XP</small></span>
+                </button>;
+              })}
+              <img className="path-mascot" src="/os-penguin.png" alt="Chim cánh cụt OS Lab cổ vũ" />
+            </div>
           </div>
-          <div className="level-grid">
-            {LEVELS.map((level, index) => <button key={level.number} className={"level-card level-" + (index + 1)} onClick={(e) => { e.stopPropagation(); beginGame(index); }}>
-              <span className="level-number">LV.{level.number}</span><strong className="level-icon">{level.icon}</strong>
-              <div><b>{level.name}</b><small>{level.korean}</small></div>
-              <dl><div><dt>시간</dt><dd>{level.seconds}s</dd></div><div><dt>목표</dt><dd>{level.goal}점</dd></div></dl>
-              <span className="level-enter">ENTER →</span>
-            </button>)}
-          </div>
-          <button className="level-back" onClick={(e) => { e.stopPropagation(); setStatus("ready"); }}>← 돌아가기</button>
         </div>}
         {status === "playing" && <>
           <button ref={targetRef} className={"star-target " + (target.rare ? "rare" : "")} style={{ left: target.x + "%", top: target.y + "%", animationDuration: speed + "s" }} onClick={catchStar} aria-label={target.rare ? "Bắt sao vàng, được 3 điểm" : "Bắt ngôi sao"}><span>{target.rare ? "★" : "✦"}</span></button>
