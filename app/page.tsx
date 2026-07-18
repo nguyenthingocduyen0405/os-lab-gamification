@@ -102,9 +102,14 @@ export default function Home() {
             <div className="path-stats"><span title="Tiến trình">▰ <b>{unlockedLevel + 1}/15</b></span><span title="Kỷ lục">◆ <b>{best}</b></span></div>
           </nav>
           <div className="path-scroll">
-            <header className="unit-banner">
-              <div><small>SECTION {Math.floor(unlockedLevel / 5) + 1} · 15 LEVEL PROTOCOL</small><h2>OS MISSION PATH</h2><p>Level 1부터 순서대로 시스템을 정복하세요.</p></div>
-              <span>{records.filter((value, index) => value >= LEVELS[index]?.goal).length}/15 CLEAR</span>
+            <header className="mission-console">
+              <div className="mission-index"><span>CORE</span><strong>0{Math.floor(unlockedLevel / 5) + 1}</strong></div>
+              <div className="mission-main">
+                <div className="mission-kicker"><span>OS LAB / LEARNING PROTOCOL</span><b><i /> ONLINE</b></div>
+                <h2>SYSTEM CORE</h2><p>순서대로 모듈을 해제하고 커널에 접근하세요.</p>
+                <div className="mission-progress"><span style={{ width: ((unlockedLevel + 1) / LEVELS.length * 100) + "%" }} /></div>
+              </div>
+              <div className="mission-readout"><div><strong>{records.filter((value, index) => value >= LEVELS[index]?.goal).length}</strong><span>/15</span></div><small>MODULES<br />CLEARED</small></div>
             </header>
             <div className="lesson-path" style={{ height: (LEVELS.length * 138 + 170) + "px" }}>
               <div className="path-line" aria-hidden="true" />
