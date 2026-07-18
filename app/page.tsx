@@ -5,21 +5,21 @@ import { useCallback, useEffect, useRef, useState } from "react";
 type Target = { x: number; y: number; rare: boolean };
 type GameStatus = "ready" | "levels" | "playing" | "ended";
 const LEVELS = [
-  { number: "01", name: "BOOT SEQUENCE", korean: "부팅 시작", seconds: 30, baseSpeed: 1.35, goal: 12, icon: ">_" },
-  { number: "02", name: "FILE SYSTEM", korean: "파일 구조", seconds: 30, baseSpeed: 1.28, goal: 16, icon: "/" },
-  { number: "03", name: "PROCESS RUSH", korean: "프로세스", seconds: 29, baseSpeed: 1.2, goal: 20, icon: "⚙" },
-  { number: "04", name: "MEMORY MAP", korean: "메모리", seconds: 28, baseSpeed: 1.13, goal: 24, icon: "RAM" },
-  { number: "05", name: "THREAD SYNC", korean: "스레드", seconds: 27, baseSpeed: 1.07, goal: 28, icon: "⇄" },
-  { number: "06", name: "I/O STORM", korean: "입출력", seconds: 26, baseSpeed: 1.01, goal: 32, icon: "I/O" },
-  { number: "07", name: "DEADLOCK", korean: "교착 상태", seconds: 25, baseSpeed: 0.96, goal: 36, icon: "×" },
-  { number: "08", name: "SCHEDULER", korean: "스케줄러", seconds: 24, baseSpeed: 0.91, goal: 40, icon: "⌁" },
-  { number: "09", name: "VIRTUAL MEMORY", korean: "가상 메모리", seconds: 23, baseSpeed: 0.86, goal: 44, icon: "VM" },
-  { number: "10", name: "SYSTEM CALL", korean: "시스템 호출", seconds: 22, baseSpeed: 0.81, goal: 48, icon: "#" },
-  { number: "11", name: "CACHE MISS", korean: "캐시", seconds: 21, baseSpeed: 0.77, goal: 52, icon: "L1" },
-  { number: "12", name: "RACE CONDITION", korean: "경쟁 상태", seconds: 20, baseSpeed: 0.73, goal: 56, icon: "≋" },
-  { number: "13", name: "ROOT ACCESS", korean: "루트 권한", seconds: 19, baseSpeed: 0.69, goal: 60, icon: "$" },
-  { number: "14", name: "KERNEL PANIC", korean: "커널 패닉", seconds: 18, baseSpeed: 0.65, goal: 66, icon: "!" },
-  { number: "15", name: "FINAL UPTIME", korean: "최종 가동", seconds: 17, baseSpeed: 0.61, goal: 72, icon: "∞" },
+  { id: "bootloader", name: "BOOTLOADER", korean: "부트로더", layer: "STARTUP", seconds: 30, baseSpeed: 1.35, goal: 12, icon: ">_" },
+  { id: "kernel-core", name: "KERNEL CORE", korean: "커널 코어", layer: "KERNEL", seconds: 30, baseSpeed: 1.28, goal: 16, icon: "K" },
+  { id: "device-drivers", name: "DEVICE DRIVERS", korean: "장치 드라이버", layer: "HARDWARE", seconds: 29, baseSpeed: 1.2, goal: 20, icon: "DRV" },
+  { id: "cpu-scheduler", name: "CPU SCHEDULER", korean: "CPU 스케줄러", layer: "KERNEL", seconds: 28, baseSpeed: 1.13, goal: 24, icon: "⌁" },
+  { id: "process-manager", name: "PROCESS MANAGER", korean: "프로세스 관리", layer: "RESOURCE", seconds: 27, baseSpeed: 1.07, goal: 28, icon: "⚙" },
+  { id: "memory-manager", name: "MEMORY MANAGER", korean: "메모리 관리", layer: "RESOURCE", seconds: 26, baseSpeed: 1.01, goal: 32, icon: "RAM" },
+  { id: "virtual-memory", name: "VIRTUAL MEMORY", korean: "가상 메모리", layer: "RESOURCE", seconds: 25, baseSpeed: 0.96, goal: 36, icon: "VM" },
+  { id: "file-system", name: "FILE SYSTEM", korean: "파일 시스템", layer: "STORAGE", seconds: 24, baseSpeed: 0.91, goal: 40, icon: "/" },
+  { id: "io-manager", name: "I/O MANAGER", korean: "입출력 관리", layer: "HARDWARE", seconds: 23, baseSpeed: 0.86, goal: 44, icon: "I/O" },
+  { id: "network-stack", name: "NETWORK STACK", korean: "네트워크 스택", layer: "SERVICES", seconds: 22, baseSpeed: 0.81, goal: 48, icon: "NET" },
+  { id: "security-layer", name: "SECURITY LAYER", korean: "보안 계층", layer: "PROTECTION", seconds: 21, baseSpeed: 0.77, goal: 52, icon: "#" },
+  { id: "system-calls", name: "SYSTEM CALLS", korean: "시스템 호출", layer: "INTERFACE", seconds: 20, baseSpeed: 0.73, goal: 56, icon: "SYS" },
+  { id: "service-manager", name: "SERVICE MANAGER", korean: "서비스 관리", layer: "SERVICES", seconds: 19, baseSpeed: 0.69, goal: 60, icon: "SVC" },
+  { id: "shell", name: "SHELL", korean: "명령 셸", layer: "USER SPACE", seconds: 18, baseSpeed: 0.65, goal: 66, icon: "$" },
+  { id: "user-space", name: "USER SPACE", korean: "사용자 공간", layer: "APPLICATION", seconds: 17, baseSpeed: 0.61, goal: 72, icon: "APP" },
 ] as const;
 const PATH_X = ["18%", "55%", "29%", "62%", "24%"] as const;
 const newTarget = (): Target => ({ x: 8 + Math.random() * 82, y: 14 + Math.random() * 72, rare: Math.random() < 0.18 });
@@ -88,7 +88,7 @@ export default function Home() {
   return (
     <main className="game-shell">
       <section className={"game-board " + (status === "playing" ? "is-playing" : "")} onClick={miss} aria-label="Khu vực chơi">
-        <div className="grid" /><div className="corner-label corner-top">VÙNG SĂN // 01</div><div className="corner-label corner-bottom">HÃY NHẮM CHÍNH XÁC</div>
+        <div className="grid" /><div className="corner-label corner-top">OS LAB // TARGET</div><div className="corner-label corner-bottom">HÃY NHẮM CHÍNH XÁC</div>
         {status === "playing" && <div className="game-hud" aria-live="polite">
           <div><span>점수</span><strong>{score.toString().padStart(2, "0")}</strong></div>
           <div><span>콤보</span><strong>×{combo}</strong></div>
@@ -99,17 +99,17 @@ export default function Home() {
           <nav className="path-topbar">
             <button onClick={(e) => { e.stopPropagation(); setStatus("ready"); }} aria-label="Quay lại">‹</button>
             <div className="path-brand"><img src="/os-penguin.png" alt="" /><strong>OS LAB</strong></div>
-            <div className="path-stats"><span title="Tiến trình">▰ <b>{unlockedLevel + 1}/15</b></span><span title="Kỷ lục">◆ <b>{best}</b></span></div>
+            <div className="path-stats"><span title="Tiến trình kiến trúc">▰ <b>{Math.round(((unlockedLevel + 1) / LEVELS.length) * 100)}%</b></span><span title="Kỷ lục">◆ <b>{best}</b></span></div>
           </nav>
           <div className="path-scroll">
             <header className="mission-console">
-              <div className="mission-index"><span>CORE</span><strong>0{Math.floor(unlockedLevel / 5) + 1}</strong></div>
+              <div className="mission-index"><span>STACK</span><strong>OS</strong></div>
               <div className="mission-main">
-                <div className="mission-kicker"><span>OS LAB / LEARNING PROTOCOL</span><b><i /> ONLINE</b></div>
-                <h2>SYSTEM CORE</h2><p>순서대로 모듈을 해제하고 커널에 접근하세요.</p>
+                <div className="mission-kicker"><span>OS LAB / ARCHITECTURE BUILD</span><b><i /> ONLINE</b></div>
+                <h2>OS COMPONENT MAP</h2><p>부트로더부터 사용자 공간까지, 운영체제를 하나씩 완성하세요.</p>
                 <div className="mission-progress"><span style={{ width: ((unlockedLevel + 1) / LEVELS.length * 100) + "%" }} /></div>
               </div>
-              <div className="mission-readout"><div><strong>{records.filter((value, index) => value >= LEVELS[index]?.goal).length}</strong><span>/15</span></div><small>MODULES<br />CLEARED</small></div>
+              <div className="mission-readout"><div><strong>{Math.round((records.filter((value, index) => value >= LEVELS[index]?.goal).length / LEVELS.length) * 100)}</strong><span>%</span></div><small>SYSTEM<br />BUILT</small></div>
             </header>
             <div className="lesson-path" style={{ height: (LEVELS.length * 138 + 170) + "px" }}>
               <div className="path-line" aria-hidden="true" />
@@ -117,10 +117,10 @@ export default function Home() {
                 const completed = (records[index] || 0) >= level.goal;
                 const locked = index > unlockedLevel;
                 const current = index === unlockedLevel;
-                return <button key={level.number} disabled={locked} style={{ top: (index * 138 + 55) + "px", left: PATH_X[index % PATH_X.length] }} className={"lesson-node" + (completed ? " completed" : "") + (current ? " current" : "") + (locked ? " locked" : "")} onClick={(e) => { e.stopPropagation(); if (!locked) beginGame(index); }} aria-label={locked ? level.name + " bị khóa" : level.name + ", " + level.seconds + " giây"}>
-                  {current && <span className="start-bubble">CURRENT</span>}
+                return <button key={level.id} disabled={locked} style={{ top: (index * 138 + 55) + "px", left: PATH_X[index % PATH_X.length] }} className={"lesson-node" + (completed ? " completed" : "") + (current ? " current" : "") + (locked ? " locked" : "")} onClick={(e) => { e.stopPropagation(); if (!locked) beginGame(index); }} aria-label={locked ? level.name + " bị khóa" : level.name + ", " + level.seconds + " giây"}>
+                  {current && <span className="start-bubble">ACTIVATE</span>}
                   <span className="node-circle"><b>{locked ? "⌁" : completed ? "✓" : level.icon}</b></span>
-                  <span className="node-copy"><strong>{level.name}</strong><small>LV.{level.number} · {level.seconds}s · {level.goal} XP</small></span>
+                  <span className="node-copy"><strong>{level.name}</strong><small>{level.layer} · {level.korean} · {level.goal} XP</small></span>
                 </button>;
               })}
               <img className="path-mascot" style={{ top: (unlockedLevel * 138 + 145) + "px" }} src="/os-penguin.png" alt="Chim cánh cụt OS Lab cổ vũ" />
@@ -138,9 +138,9 @@ export default function Home() {
           <button className="primary-button os-start-button" onClick={(e) => { e.stopPropagation(); setStatus("levels"); }}>시작하기</button>
         </div>}
         {status === "ended" && <div className="game-overlay results">
-          <span className="overlay-icon">{passed ? "✓" : "!"}</span><p className="overlay-kicker">LEVEL {currentLevel.number}</p><h2>{passed ? "MISSION COMPLETE" : "TRY AGAIN"}</h2>
+          <span className="overlay-icon">{passed ? "✓" : "!"}</span><p className="overlay-kicker">OS MODULE / {currentLevel.name}</p><h2>{passed ? "MODULE ONLINE" : "MODULE FAILED"}</h2>
           <div className="result-row"><div><strong>{score}</strong><span>ĐIỂM / {currentLevel.goal}</span></div><div><strong>{accuracy}%</strong><span>CHÍNH XÁC</span></div><div><strong>{hits}</strong><span>SAO BẮT ĐƯỢC</span></div></div>
-          <button className="primary-button" onClick={(e) => { e.stopPropagation(); if (passed) { setSelectedLevel(Math.min(selectedLevel + 1, LEVELS.length - 1)); setStatus("levels"); } else { beginGame(selectedLevel); } }}>{passed ? "LEVEL TIẾP THEO" : "THỬ LẠI"} <span>{passed ? "→" : "↻"}</span></button>
+          <button className="primary-button" onClick={(e) => { e.stopPropagation(); if (passed) { setSelectedLevel(Math.min(selectedLevel + 1, LEVELS.length - 1)); setStatus("levels"); } else { beginGame(selectedLevel); } }}>{passed ? "MODULE TIẾP THEO" : "THỬ LẠI"} <span>{passed ? "→" : "↻"}</span></button>
         </div>}
       </section>
     </main>
