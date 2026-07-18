@@ -70,12 +70,7 @@ export default function Home() {
           {lastGain !== null && <div className="gain-pop">+{lastGain}</div>}
         </>}
         {status === "ready" && <div className="game-overlay os-start">
-          <div className="os-logo" aria-label="OS Lab operating system">
-            <div className="os-window-bar" aria-hidden="true"><i /><i /><i /><span>OS_KERNEL</span></div>
-            <div className="os-wordmark"><span>O</span><span>S</span></div>
-            <div className="os-terminal" aria-hidden="true"><span>oslab@system:~$</span><b>_</b></div>
-            <i className="circuit-node node-one" aria-hidden="true" /><i className="circuit-node node-two" aria-hidden="true" />
-          </div>
+          <img className="os-penguin-logo" src="/os-penguin.png" alt="Chim cánh cụt Linux dễ thương của OS Lab" />
           <p className="os-welcome">OS lab에 오는 걸 환영합니다.</p>
           <h2 className="os-ready">준비됐어?</h2>
           <button className="primary-button os-start-button" onClick={(e) => { e.stopPropagation(); beginGame(); }}>시작하기</button>
