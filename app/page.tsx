@@ -57,25 +57,14 @@ export default function Home() {
 
   return (
     <main className="game-shell">
-      <div className="ambient ambient-one" /><div className="ambient ambient-two" />
-      <header className="topbar">
-        <a className="brand" href="#" aria-label="Săn Sao - trang chủ"><span className="brand-mark">✦</span><span>SĂN SAO</span></a>
-        <div className="best-score"><span>KỶ LỤC</span><strong>{best.toString().padStart(2, "0")}</strong></div>
-      </header>
-
-      <section className="hero-copy">
-        <div><p className="eyebrow">THỬ THÁCH PHẢN XẠ</p><h1>Chạm nhanh.<br /><span>Ghi điểm lớn.</span></h1></div>
-        <p className="intro">Bắt các vì sao trước khi hết 30 giây. Giữ chuỗi combo để nhân điểm — và đừng bỏ lỡ sao vàng!</p>
-      </section>
-
-      <section className="score-strip" aria-live="polite">
-        <div className="stat"><span>ĐIỂM</span><strong>{score.toString().padStart(2, "0")}</strong></div>
-        <div className="stat combo-stat"><span>COMBO</span><strong>×{combo}</strong></div>
-        <div className="timer-block"><div className="timer-copy"><span>THỜI GIAN</span><strong>{timeLeft}s</strong></div><div className="timer-track" aria-hidden="true"><div style={{ width: ((timeLeft / GAME_TIME) * 100) + "%" }} /></div></div>
-      </section>
-
       <section className={"game-board " + (status === "playing" ? "is-playing" : "")} onClick={miss} aria-label="Khu vực chơi">
         <div className="grid" /><div className="corner-label corner-top">VÙNG SĂN // 01</div><div className="corner-label corner-bottom">HÃY NHẮM CHÍNH XÁC</div>
+        {status === "playing" && <div className="game-hud" aria-live="polite">
+          <div><span>점수</span><strong>{score.toString().padStart(2, "0")}</strong></div>
+          <div><span>콤보</span><strong>×{combo}</strong></div>
+          <div><span>시간</span><strong>{timeLeft}s</strong></div>
+          <div className="hud-progress"><span style={{ width: ((timeLeft / GAME_TIME) * 100) + "%" }} /></div>
+        </div>}
         {status === "playing" && <>
           <button ref={targetRef} className={"star-target " + (target.rare ? "rare" : "")} style={{ left: target.x + "%", top: target.y + "%", animationDuration: speed + "s" }} onClick={catchStar} aria-label={target.rare ? "Bắt sao vàng, được 3 điểm" : "Bắt ngôi sao"}><span>{target.rare ? "★" : "✦"}</span></button>
           {lastGain !== null && <div className="gain-pop">+{lastGain}</div>}
@@ -92,7 +81,6 @@ export default function Home() {
           <button className="primary-button" onClick={(e) => { e.stopPropagation(); beginGame(); }}>CHƠI LẠI <span>↻</span></button>
         </div>}
       </section>
-      <footer><p><span>●</span> MẸO: SAO VÀNG CHO ĐIỂM GẤP 3</p><p>THIẾT KẾ CHO NHỮNG NGÓN TAY NHANH NHẤT</p></footer>
     </main>
   );
 }
