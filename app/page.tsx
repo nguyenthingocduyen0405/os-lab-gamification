@@ -80,9 +80,11 @@ export default function Home() {
           <button ref={targetRef} className={"star-target " + (target.rare ? "rare" : "")} style={{ left: target.x + "%", top: target.y + "%", animationDuration: speed + "s" }} onClick={catchStar} aria-label={target.rare ? "Bắt sao vàng, được 3 điểm" : "Bắt ngôi sao"}><span>{target.rare ? "★" : "✦"}</span></button>
           {lastGain !== null && <div className="gain-pop">+{lastGain}</div>}
         </>}
-        {status === "ready" && <div className="game-overlay">
-          <span className="overlay-icon">✦</span><p className="overlay-kicker">BẠN ĐÃ SẴN SÀNG?</p><h2>30 giây. Vô số vì sao.</h2>
-          <button className="primary-button" onClick={(e) => { e.stopPropagation(); beginGame(); }}>BẮT ĐẦU CHƠI <span>→</span></button><p className="hint">Dùng chuột, chạm màn hình hoặc phím Enter</p>
+        {status === "ready" && <div className="game-overlay os-start">
+          <div className="os-logo" aria-label="OS">OS</div>
+          <p className="os-welcome">OS lab에 오는 걸 환영합니다.</p>
+          <h2 className="os-ready">준비됐어?</h2>
+          <button className="primary-button os-start-button" onClick={(e) => { e.stopPropagation(); beginGame(); }}>시작하기</button>
         </div>}
         {status === "ended" && <div className="game-overlay results">
           <span className="overlay-icon">★</span><p className="overlay-kicker">HẾT GIỜ!</p><h2>{score >= best && score > 0 ? "Kỷ lục mới!" : "Một lượt săn đẹp!"}</h2>
